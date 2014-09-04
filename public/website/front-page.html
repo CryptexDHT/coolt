@@ -1,0 +1,410 @@
+<link rel="import" href="/bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="/bower_components/core-animated-pages/core-animated-pages.html">
+<link rel="import" href="/bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="/bower_components/core-menu/core-menu.html">
+<link rel="import" href="/bower_components/core-item/core-item.html">
+<link rel="import" href="/bower_components/core-overlay/core-overlay.html">
+
+<!-- a simple dialog element made with core-overlay -->
+<polymer-element name="x-dialog" attributes="opened autoCloseDisabled">
+<template>
+	<style>
+
+		:host {
+			box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 13px;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			overflow: auto;
+			background: white;
+			padding:30px 42px;
+			outline: 1px solid rgba(0,0,0,0.2);
+			box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+		}
+	</style>
+	<core-overlay id="overlay" layered backdrop opened="{{opened}}" autoCloseDisabled="{{autoCloseDisabled}}"  transition="core-transition-center"></core-overlay>
+	<content></content>
+</template>
+<script>
+
+Polymer('x-dialog', {
+
+	ready: function() {
+		this.$.overlay.target = this;
+	},
+
+	toggle: function() {
+		this.$.overlay.toggle();
+	}
+
+});
+
+</script>
+</polymer-element>
+
+
+
+
+ <polymer-element name="front-page">
+
+
+
+	<template>
+
+		<style>
+
+
+	      .chip-container {
+	        position: absolute;
+	        top: 275px;
+	        right: 0;
+	        left: 0;
+	        text-align: center;
+	      }
+
+	      .chip {
+	        display: inline-block;
+	        position: relative;
+	        border-radius: 3px;
+	        margin: 4px;
+	        overflow: hidden;
+	        text-align: start;
+	        background-color: #fff;
+	        box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.16);
+	      }
+
+	      .chip-top {
+	        width: 200px;
+	      }
+
+	      .chip-bottom {
+	        padding: 8px;
+	        line-height: 1.5;
+	      }
+
+	      .chip-title-title {
+	        font-weight: bold;
+	      }
+
+
+	      #details {
+	        padding: 200px 10% 0;
+	      }
+
+	      .card {
+	        height: 400px;
+	        border-radius: 3px;
+	        text-align: start;
+	        overflow: hidden;
+	        background: #fff;
+	        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	      }
+
+	      .card-left {
+	        width: 400px;
+	      }
+
+	      .card-right {
+	        padding: 24px;
+	      }
+
+	      .card-icon {
+	        border-radius: 50%;
+	        width: 60px;
+	        height: 60px;
+	        margin-right: 16px;
+	      }
+
+	      .card-title-title {
+	        font-size: 2em;
+	      }
+
+    body {
+      background-color: #f9f9f9;
+      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-touch-callout: none;
+    }
+    
+    section {
+      padding: 30px 25px;
+    }
+    
+    section > * {
+      margin: 10px
+    }
+    
+    /* Button */
+    .button {
+      display: inline-block;
+      position: relative;
+      width: 120px;
+      height: 32px;
+      line-height: 32px;
+      border-radius: 2px;
+      font-size: 0.9em;
+      background-color: #fff;
+      color: #646464;
+      padding: 0 20px;
+      text-align: center;
+    }
+    
+    .button > paper-ripple {
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .button.narrow {
+      width: 60px;
+    }
+    
+    .button.grey {
+      background-color: #eee;
+    }
+    
+    .button.blue {
+      background-color: #4285f4;
+      color: #fff;
+    }
+    
+    .button.green {
+      background-color: #0f9d58;
+      color: #fff;
+    }
+    
+    .button.raised {
+      transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: 0.2s;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    }
+    
+    .button.raised:active {
+      box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+      transition-delay: 0s;
+    }
+
+    
+
+    #editCatButton {
+    	position: absolute;
+    	top: 200px;
+    	z-index: 100;
+    	left: 50%;
+    	transform: translate(-50%, 50%);
+    	-ms-transform: translate(-50%, 50%);
+    	-webkit-transform: translate(-50%, 50%);
+    	-moz-transform: translate(-50%, 50%);
+    	-o-transform: translate(-50%, 50%);
+    }
+
+
+		</style>
+
+		<core-ajax url="/api/links" handleAs="json" auto response="{{items}}"></core-ajax>
+		<core-animated-pages selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
+		
+			<section horizontal layout>
+				<div class="chip-container" hero-p on-tap="{{transition}}">
+
+
+				<template repeat="{{item in items | categoryFilter('') }}">
+					<div class="chip" hero-id="{{item.artist}}-{{item.title}}" hero?="{{selectedPage === item }}" self-start>
+						<div class="chip-top" style="background:{{item.color}};" hero-id="{{item.artist}}-{{item.title}}-art" hero?="{{selectedPage === item}}">
+							<template repeat="{{ category in items | categoryFilter(item.lid) }}">
+								<!-- <a href="/{{category.href}}/"></a> -->
+								<core-item label="{{ category.title }}"></core-item>										
+							</template>
+							<br>
+
+
+
+						</div>
+						<div class="chip-bottom">
+							<div class="chip-title-title">{{item.title}}</div>
+						</div>
+					</div>
+				</template>
+
+
+
+
+				</div>
+
+
+			    <div id="editCatButton" class="button raised blue" on-tap="{{tapHandler}}">
+			      <div class="center" fit>EDIT CATEGORIES</div>
+			      <paper-ripple fit></paper-ripple>
+			    </div>
+
+			</section>
+
+	      <section id="details">
+
+		        <div class="card" layout horizontal hero-id="{{selectedPage.artist}}-{{selectedPage.title}}" hero on-tap="{{transition}}">
+		          <div class="card-left" style="background:{{selectedPage.color}};" hero-id="{{selectedPage.artist}}-{{selectedPage.title}}-art" hero></div>
+		          <div class="card-right" flex>
+		            <div layout horizontal center>
+		              <div>
+		                <div class="card-icon" style="background:{{selectedPage.color}};"></div>
+		              </div>
+		              <div flex>
+		                <div class="card-title-title">{{selectedPage.title}}</div>
+		                <div class="card-title-artist">{{selectedPage.artist}}</div>
+		              </div>
+		            </div>
+		          </div>
+		        </div>
+
+	      </section>
+
+
+		</core-animated-pages>
+
+
+
+
+
+
+		<x-dialog id="dialog" class="dialog">
+			<!-- place all overlay styles inside the overlay target -->
+			<style no-shim>
+			
+				h2 {
+					color: #000;	
+				}
+
+				.dialog {
+					box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					font-family: Arial, Helvetica, sans-serif;
+					font-size: 13px;
+					-webkit-user-select: none;
+					-moz-user-select: none;
+					overflow: auto;
+					background: white;
+					padding:30px 42px;
+					outline: 1px solid rgba(0,0,0,0.2);
+					box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+				}
+
+				#dialog {
+					width: 500px;
+				}
+
+				.pad {
+					padding-left: 30px;
+				}
+			</style>
+			<h2>Edit Categories</h2>
+
+			<hr>
+			<form action="">
+				
+				<template repeat="{{item in items }}">
+
+					<div>
+						<label for="">Link ID</label>
+						<input type="text" value="{{item.lid}}" disabled><br>
+						<label for="">Title</label>
+						<input type="text" value="{{ item.title }}"><br>
+						<label for="">Parent</label>
+						<input type="text" value="{{ item.parent }}"><br>
+						<label for="">Short link</label>
+						<input type="text" value="{{ item.short }}"><br>
+						<button>Delete</button>
+
+						<hr>
+					</div>
+				</template >
+
+			</form>
+
+
+			<div>
+
+				<core-overlay layered id="confirmation" class="dialog" backdrop transition="core-transition-top">
+					<!-- place all overlay styles inside the overlay target -->
+					<style no-shim>
+						.dialog {
+							box-sizing: border-box;
+							-moz-box-sizing: border-box;
+							font-family: Arial, Helvetica, sans-serif;
+							font-size: 13px;
+							-webkit-user-select: none;
+							-moz-user-select: none;
+							overflow: hidden;
+							background: white;
+							padding:30px 42px;
+							outline: 1px solid rgba(0,0,0,0.2);
+							box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+						}
+
+						#confirmation {
+							box-sizing: border-box;
+							text-align: center;
+							width: 150px;
+						}
+					</style>
+					Thank you.
+				</core-overlay>
+			</div><br><br>
+			<button core-overlay-toggle>OK</button>
+		</x-dialog>
+
+
+
+
+
+
+
+
+
+
+
+	</template>
+	<script>
+
+		Polymer('front-page', {
+
+			page: 0,
+			items: [],
+			selectedPage: null,
+
+			tapHandler: function() {
+				this.$.dialog.toggle();
+			},
+
+
+			categoryFilter: function  (items, term) {
+				var out = [];
+
+				// console.log(items, term);
+
+				items.forEach(function (item) {
+					// console.log(item.parent, term, item.title);
+					if(item.parent === term) out.push(item);
+				});
+				
+
+				return out;
+			},
+
+
+			transition: function(e) {
+				if (this.page === 0 && e.target.templateInstance.model.item) {
+					  this.selectedPage = e.target.templateInstance.model.item;
+					  this.page = 1;
+					} else this.page = 0;
+					
+				}
+			}
+		);
+
+	</script>
+</polymer-element>
